@@ -1,0 +1,111 @@
+@model IEnumerable<CoffeeShop.Models.BasketItem>
+
+@{
+    ViewData["Title"] = "Your Basket";
+    var total = Model.Sum(item => item.Quantity * item.UnitPrice);
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1>Your Basket</h1>
+        
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-basket fa-5x text-muted mb-3"></i>
+                <h3 class="text-muted">Your basket is empty</h3>
+                <p class="text-muted">Browse our delicious products and add them to your basket!</p>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                    <i class="fas fa-coffee"></i> Start Shopping
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-8">
+                    @foreach (var item in Model)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                        <div class="product-image bg-light rounded d-flex align-items-center justify-content-center" style="height: 80px;">
+                                            <i class="fas fa-coffee text-muted"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5 class="card-title mb-1">@item.Product.Name</h5>
+                                        <p class="card-text text-muted small mb-0">@item.Product.Description</p>
+                                        <span class="text-success">$@item.UnitPrice.ToString("F2")</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <form asp-controller="Basket" asp-action="UpdateQuantity" method="post" class="d-flex align-items-center">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="mx-3 fw-bold">@item.Quantity</span>
+                                            <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <strong>$@((item.Quantity * item.UnitPrice).ToString("F2"))</strong>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <form asp-controller="Basket" asp-action="RemoveFromBasket" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Order Summary</h5>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <strong>$@total.ToString("F2")</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Tax:</span>
+                                <strong>$@((total * 0.08m).ToString("F2"))</strong>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong>Total:</strong>
+                                <strong>$@((total * 1.08m).ToString("F2"))</strong>
+                            </div>
+                            <button class="btn btn-success w-100 mt-3" disabled>
+                                <i class="fas fa-credit-card"></i> Checkout (Coming Soon)
+                            </button>
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary w-100 mt-2">
+                                <i class="fas fa-arrow-left"></i> Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form[action*="UpdateQuantity"], form[action*="RemoveFromBasket"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function() {
+                setTimeout(updateBasketCount, 100);
+            });
+        });
+    });
+</script>

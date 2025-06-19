@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "coffee-shop": {
+      "url": "https://localhost:7074"
+    }
+  }
+}

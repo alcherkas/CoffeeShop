@@ -1,0 +1,6 @@
+@CoffeeShop.McpServer_HostAddress = http://localhost:5088
+
+GET {{CoffeeShop.McpServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
