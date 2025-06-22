@@ -1,6 +1,9 @@
 name: Extract Jira Ticket from Branch
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - '*'
 
 jobs:
   extract-jira-ticket:
