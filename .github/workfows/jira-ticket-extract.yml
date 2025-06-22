@@ -28,7 +28,7 @@ jobs:
             echo "Jira Ticket ID: $JIRA_ID"
             echo "jira_id=$JIRA_ID" >> $GITHUB_OUTPUT
           else
-            echo "No Jira Ticket ID found in branch name."
+            echo "No Jira Ticket ID was found in branch name."
             exit 1
           fi
 
