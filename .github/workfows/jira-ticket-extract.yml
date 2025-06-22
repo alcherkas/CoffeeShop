@@ -3,7 +3,7 @@ name: Extract Jira Ticket from Branch
 on:
   push:
     branches:
-      - 'feature/*'
+      - '**'
   pull_request:
     branches:
       - '**'
