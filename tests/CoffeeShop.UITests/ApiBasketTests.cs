@@ -57,6 +57,35 @@ public class ApiBasketTests
 
 
     [Test]
+    public async Task ShopBasket003_UpdateBasketItemQuantity()
+    {
+        await ApiContext!.PostAsync($"/api/basket/{SessionId}/items", new()
+        {
+            DataObject = new { productId = 1, quantity = 2 }
+        });
+
+        var basketResponse = await ApiContext.GetAsync($"/api/basket/{SessionId}");
+        var basketJson = await basketResponse.TextAsync();
+        using var docBefore = JsonDocument.Parse(basketJson);
+        var itemId = docBefore.RootElement[0].GetProperty("id").GetInt32();
+
+        var response = await ApiContext.PutAsync($"/api/basket/{SessionId}/items/{itemId}", new()
+        {
+            DataObject = new { quantity = 5 }
+        });
+
+        Assert.That(response.Status, Is.EqualTo(200), $"Update item failed with status {response.Status}. Response: {await response.TextAsync()}");
+        
+        var updatedBasketResponse = await ApiContext.GetAsync($"/api/basket/{SessionId}");
+        var updatedBasketJson = await updatedBasketResponse.TextAsync();
+        using var docAfter = JsonDocument.Parse(updatedBasketJson);
+        
+        Assert.That(docAfter.RootElement.GetArrayLength(), Is.EqualTo(1));
+        Assert.That(docAfter.RootElement[0].GetProperty("quantity").GetInt32(), Is.EqualTo(5));
+        Assert.That(docAfter.RootElement[0].GetProperty("productId").GetInt32(), Is.EqualTo(1));
+    }
+
+    [Test]
     public async Task ShopBasket005_ClearEntireBasket()
     {
         await ApiContext!.PostAsync($"/api/basket/{SessionId}/items", new()
